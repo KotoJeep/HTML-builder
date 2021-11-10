@@ -11,16 +11,14 @@ const pathBundleStyles = path.join(__dirname, 'project-dist/style.css');
 
 //create dist folder
 fs.mkdir(pathProject, {recursive: true}, (err) => {
-  console.log(err);
-});
-fs.copyFile(pathTemplate, pathHtml, err => {
   if (err) console.log(err);
 });
+
 
 // copy assets
 function copyFiles(pathFolder, pathCopy) {
   fs.mkdir(pathCopy, {recursive: true}, (err) => {
-    console.log(err);
+    if (err) console.log(err);
   });
   fs.readdir(pathFolder, {withFileTypes: true}, (err, files) => {
     if (err) console.log(err);
@@ -39,10 +37,13 @@ function copyFiles(pathFolder, pathCopy) {
 copyFiles(pathAssets, pathCopyAssets);
 
 //merge styles
+fs.unlink(pathBundleStyles, err=>{
+  if (err) console.log(err);
+});
 fs.readdir(pathStyles, (err, files) => {
   if (err) console.log(err);
   files.forEach(file => {
-    fs.readFile(path.join(pathStyles, file), 'utf8', (err, data) => {
+    fs.readFile(path.join(pathStyles, file),'utf-8',  (err, data) => {
       if (err) console.log(err);
       fs.appendFile(pathBundleStyles, data, err => {
         if (err) console.log(err);
@@ -52,27 +53,30 @@ fs.readdir(pathStyles, (err, files) => {
 });
 
 //create html
-fs.readFile(pathHtml, (err, data) => { //reading html
-  if (err) console.log(err);
-  console.log(data);
-  fs.readdir(pathComponents, {withFileTypes: true}, (err, files) => {
-    if (err) console.log(err);
-    files.forEach(file => {
-      
-      let pathFile = path.join(pathComponents, file.name);
-      fs.stat(pathFile, () => {
-        let name = path.basename(pathFile, path.extname(pathFile));
-        console.log(name);
-        // data = data.replace(`{{${name}}`, file);
-        // fs.writeFile(pathHtml, data, (err) => {
-        //   if (err) console.log(err);
-        // });
+fs.copyFile(pathTemplate, pathHtml, err => {
+  if (err) {
+    console.log(err);
+  } else {
+    fs.readdir(pathComponents, (err, files) => {
+      if (err) throw err;
+      fs.readFile(pathHtml, 'utf-8', (err, data) => {
+        if (err) throw err;
+        else {
+          files.forEach(file => {
+            const name = path.basename(file, path.extname(file));
+            // console.log(name);
+            fs.readFile(`${pathComponents}/${file}`, 'utf-8', (err, component) => {
+              if (err) {
+                console.log(err);
+              }
+              data = data.replace(`{{${name}}}`, component);
+              fs.writeFile(pathHtml, data, 'utf-8', (err) => {
+                if (err) console.log(err);
+              });
+            });
+          });
+        }
       });
-      
-      // fs.readFile(path.join(pathComponents, file), 'utf8', (err, component) => {
-      //   if (err) console.log(err);
-      // });
-      
     });
-  });
+  }
 });
