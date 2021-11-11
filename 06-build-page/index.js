@@ -64,7 +64,7 @@ fs.copyFile(pathTemplate, pathHtml, err => {
         else {
           files.forEach(file => {
             const name = path.basename(file, path.extname(file));
-            // console.log(name);
+
             fs.readFile(`${pathComponents}/${file}`, 'utf-8', (err, component) => {
               if (err) {
                 console.log(err);
