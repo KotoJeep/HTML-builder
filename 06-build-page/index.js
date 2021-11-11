@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const pathProject = path.join(__dirname, 'project-dist');
-const pathCopyAssets = path.join(__dirname, 'project-dist/aseets');
+const pathCopyAssets = path.join(__dirname, 'project-dist/assets');
 const pathTemplate = path.join(__dirname, 'template.html');
 const pathComponents = path.join(__dirname, 'components');
 const pathHtml = path.join(__dirname, 'project-dist/index.html');
